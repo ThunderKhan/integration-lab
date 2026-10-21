@@ -145,7 +145,7 @@ Raw S3 keys stay on the server; the browser receives stable document/revision ID
 npm run lint
 npm run typecheck
 npm run build
-node --test tests/accounting-*.test.cjs
+node --test
 ```
 
 Test manually with fabricated documents: upload; filter; restart and confirm persistence; submit → review → approve; reject submitted → approved; replace, then download both versions; archive and restore; switch to Moto and test again when ready.
