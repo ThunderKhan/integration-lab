@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState, type FormEvent, type SVGProps } from "react";
+import Link from "next/link";
 
 type Status = "submitted" | "in_review" | "needs_changes" | "approved" | "archived";
 type Mode = "demo" | "live";
@@ -162,10 +163,10 @@ export default function Vault() {
 
   return <div className="vault-page">
     <aside className="vault-sidebar">
-      <a className="vault-home" href="/"><span className="vault-mark"><Glyph name="cloud" size={22}/></span><span><strong>integration<span>lab</span></strong><small>ACCOUNTING MODULE</small></span></a>
+      <Link className="vault-home" href="/"><span className="vault-mark"><Glyph name="cloud" size={22}/></span><span><strong>integration<span>lab</span></strong><small>ACCOUNTING MODULE</small></span></Link>
       <div className="vault-nav-label">WORKSPACE</div>
       <div className="vault-nav-entry active"><Glyph name="folder"/> Document Vault</div>
-      <a className="vault-nav-entry" href="/"><Glyph name="arrow"/> API Playground</a>
+      <Link className="vault-nav-entry" href="/"><Glyph name="arrow"/> API Playground</Link>
       <div className="vault-nav-label vault-sidebar-section">CAPABILITIES</div>
       <div className="vault-nav-entry muted"><Glyph name="shield"/> Private S3 objects</div>
       <div className="vault-nav-entry muted"><Glyph name="history"/> Revision history</div>
