@@ -86,19 +86,17 @@ export default function Dashboard() {
 
   const headers = useCallback((): HeadersInit => ({ ...(token ? { "x-lab-token": token } : {}) }), [token]);
 
-  const loadFiles = useCallback(async () => {
+  const loadFiles = useCallback(async (requestedMode: Mode = mode) => {
     setListLoading(true);
     setListError("");
     try {
-      const response = await fetch(`/api/storage/list?mode=${mode}`, { headers: headers(), cache: "no-store" });
+      const response = await fetch(`/api/storage/list?mode=${requestedMode}`, { headers: headers(), cache: "no-store" });
       const data: ApiResult = await response.json();
       if (!response.ok || !data.ok) throw new Error(data.error || "Could not load files.");
       setFiles(data.files || []);
     } catch (error) { setListError(error instanceof Error ? error.message : "Could not load files."); }
     finally { setListLoading(false); }
   }, [mode, headers]);
-
-  useEffect(() => { if (active === "storage") void loadFiles(); }, [active, loadFiles]);
 
   function record(service: string, title: string, detail: string, simulated: boolean) {
     setHistory((items) => [{ id: Date.now() + Math.random(), service, title, detail, simulated }, ...items].slice(0, 5));
@@ -169,7 +167,16 @@ export default function Dashboard() {
     } catch (error) { feedback(error); } finally { setBusy(""); }
   }
 
-  function navigate(service: Service) { setActive(service); setNotice(null); }
+  function navigate(service: Service) {
+    setActive(service);
+    setNotice(null);
+    if (service === "storage") void loadFiles();
+  }
+
+  function changeMode(nextMode: Mode) {
+    setMode(nextMode);
+    if (active === "storage") void loadFiles(nextMode);
+  }
   const configured = status?.providers;
   const liveReady = Boolean(status?.liveEnabled);
 
@@ -189,7 +196,7 @@ export default function Dashboard() {
         <header className="topbar"><div className="breadcrumbs">Workspace <Icon name="chevron" size={13}/> <span>{active === "overview" ? "Overview" : serviceInfo[active === "storage" ? "s3" : active].label}</span></div><div className="topbar-right"><span className="environment-label"><span className="online-dot"/> Local environment</span><button className="settings-btn" onClick={() => setShowSettings((v) => !v)} aria-expanded={showSettings} aria-label="API access settings"><Icon name="settings" size={19}/></button><div className="avatar">IL</div></div></header>
         <main className="content">
           <div className="page-intro"><div><div className="eyebrow"><Icon name="sparkles" size={14}/> API PLAYGROUND / {active.toUpperCase()}</div><h1>{active === "overview" ? "Your integrations, simplified." : active === "whatsapp" ? "WhatsApp messaging" : active === "storage" ? "Cloud storage" : "Transactional email"}</h1><p>{active === "overview" ? "Connect, test, and explore powerful APIs—all from one developer workspace." : active === "whatsapp" ? "Test Meta's official WhatsApp Cloud API using a template message." : active === "storage" ? "Upload and retrieve private files using an S3-compatible interface." : "Send transactional emails through Mailgun's HTTP API."}</p></div><div className="intro-symbol"><Icon name={active === "overview" ? "zap" : active === "whatsapp" ? "message" : active === "storage" ? "cloud" : "mail"} size={33}/></div></div>
-          <div className="mode-banner"><div className="mode-banner-copy"><span className={`status-pulse ${mode === "live" ? "pulse-live" : ""}`}/><div><strong>{mode === "demo" ? "Demo environment" : "Live provider requests"}</strong><span>{mode === "demo" ? "Safe simulation. No real messages, uploads, or provider costs." : "Real operations may incur provider charges. Use only test accounts."}</span></div></div><div className="mode-toggle" role="group" aria-label="Execution mode"><button className={mode === "demo" ? "active" : ""} onClick={() => setMode("demo")}>Demo</button><button className={mode === "live" ? "active" : ""} disabled={!liveReady} title={!liveReady ? "Set ENABLE_LIVE_INTEGRATIONS=true in .env.local" : "Send real provider requests"} onClick={() => setMode("live")}>Live</button></div></div>
+          <div className="mode-banner"><div className="mode-banner-copy"><span className={`status-pulse ${mode === "live" ? "pulse-live" : ""}`}/><div><strong>{mode === "demo" ? "Demo environment" : "Live provider requests"}</strong><span>{mode === "demo" ? "Safe simulation. No real messages, uploads, or provider costs." : "Real operations may incur provider charges. Use only test accounts."}</span></div></div><div className="mode-toggle" role="group" aria-label="Execution mode"><button className={mode === "demo" ? "active" : ""} onClick={() => changeMode("demo")}>Demo</button><button className={mode === "live" ? "active" : ""} disabled={!liveReady} title={!liveReady ? "Set ENABLE_LIVE_INTEGRATIONS=true in .env.local" : "Send real provider requests"} onClick={() => changeMode("live")}>Live</button></div></div>
           {showSettings && <section className="settings-panel"><div><h3>Request authorization</h3><p>Live requests require <code>INTEGRATION_LAB_ADMIN_TOKEN</code>. This value stays in browser memory and is never committed.</p></div><label htmlFor="admin-token" className="sr-only">Admin token</label><input id="admin-token" type="password" placeholder="Paste your local admin token" autoComplete="off" value={token} onChange={(e) => setToken(e.target.value)}/><button className="text-button" onClick={() => setToken("")}>Clear</button></section>}
           {notice && <div className={`notice ${notice.kind}`} role="status"><Icon name={notice.kind === "success" ? "check" : "info"} size={19}/><span>{notice.text}</span><button onClick={() => setNotice(null)} aria-label="Dismiss message">×</button></div>}
 
