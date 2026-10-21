@@ -188,7 +188,7 @@ export default function Dashboard() {
         <nav className="side-nav" aria-label="Main navigation">
           {menus.map((item) => <button key={item.id} className={`nav-item ${active === item.id ? "selected" : ""}`} onClick={() => navigate(item.id)} aria-current={active === item.id ? "page" : undefined}><Icon name={item.icon} size={19}/><span>{item.label}</span>{active === item.id && <span className="nav-active-dot"/>}</button>)}
         </nav>
-        <div className="nav-heading tools-heading">TOOLS & RESOURCES</div>
+        <a href="/accounting/storage" className="nav-item" style={{ marginTop: 12, color: "#dad7ff", border: "1px solid #45426e", background: "#292b4b" }}><Icon name="file" size={19}/><span>Accounting Vault</span><Icon name="arrow" size={15}/></a><div className="nav-heading tools-heading">TOOLS & RESOURCES</div>
         <div className="nav-extras"><a href="https://developers.facebook.com/docs/whatsapp/cloud-api/" target="_blank" rel="noreferrer"><Icon name="external" size={17}/>Meta documentation</a><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/Welcome.html" target="_blank" rel="noreferrer"><Icon name="external" size={17}/>AWS S3 docs</a><a href="https://documentation.mailgun.com/" target="_blank" rel="noreferrer"><Icon name="external" size={17}/>Mailgun docs</a></div>
         <div className="sidebar-bottom"><div className="sidebar-secure"><Icon name="shield" size={19}/><div><strong>Security first</strong><span>Credentials stay on the server</span></div></div><div className="sidebar-footer">Integration Lab <span>v1.0</span></div></div>
       </aside>

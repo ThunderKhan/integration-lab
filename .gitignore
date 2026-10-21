@@ -12,3 +12,6 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 coverage/
+
+# Local-only synthetic document vault persistence (never commit uploaded documents)
+/.local-data/
