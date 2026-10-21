@@ -26,7 +26,9 @@ export function addDemoFile(name: string, contentType: string, bytes: Buffer): S
 }
 
 export function listDemoFiles(): StoredFile[] {
-  return [...storage.values()].map(({ bytes: _bytes, ...metadata }) => metadata).reverse();
+  return [...storage.values()].map(({ key, name, size, contentType, uploadedAt }) => ({
+    key, name, size, contentType, uploadedAt,
+  })).reverse();
 }
 
 export function getDemoFile(key: string): DemoEntry | undefined {
